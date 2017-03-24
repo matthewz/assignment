@@ -1,0 +1,117 @@
+configure_server()
+{
+
+   echo "I am configuring: ${HST}"
+
+   if [[ "${HST}" == "server1" ]]
+   then
+      (
+      echo 127.0.0.1 localhost ${HST}
+      echo 192.168.33.102 server2
+      echo 192.168.33.103 server3
+      ) > /etc/hosts
+      cp /vagrant/master.conf /etc/redis/redis.conf
+   fi
+   if [[ "${HST}" == "server2" ]]
+   then
+      (
+      echo 127.0.0.1 localhost ${HST}
+      echo 192.168.33.101 server1
+      echo 192.168.33.103 server3
+      ) > /etc/hosts
+      cp /vagrant/slave.conf /etc/redis/redis.conf
+   fi
+   if [[ "${HST}" == "server3" ]]
+   then
+      (
+      echo 127.0.0.1 localhost ${HST}
+      echo 192.168.33.101 server1
+      echo 192.168.33.102 server2
+      ) > /etc/hosts
+      cp /vagrant/slave.conf /etc/redis/redis.conf
+   fi
+   (rm -rf /var/consul ; mkdir /var/consul) 2> /dev/null
+   chown root.vagrant /var/consul
+   chmod -R 755 /var/consul
+   cp /vagrant/server*.json /var/consul
+}
+
+#
+# Not used...relied on community instead
+# In the interest of time, that included the /etc/init.d/ scripts I needed
+#
+install_redis()
+{
+#
+#  Build and install redis-server the non-docker way
+#  Ubuntu image is docker ready, so, I can do that later - get it working first.
+#
+#  "make test" will not run without tcl
+   apt-get -y install tcl
+#
+   rm -f redis-stable.tar.gz
+   wget http://download.redis.io/redis-stable.tar.gz 1> /dev/null 2>&1
+   tar xzf redis-stable.tar.gz
+   cd redis-stable
+   #make 1> ./make_sysout.txt 2> ./make_stderr.txt
+   RC=$?
+   RC=1
+   echo "RC=_${RC}_"
+   if [[ "${RC}" != "0" ]]
+   then
+      echo "redis install may have failed - please check"
+   else
+      echo "Running tests on redis...this might take a few minutes"
+      make test 1> ./make_test_sysout.txt 2> ./make_test_stderr.txt
+      RC=$?
+      if [[ "${RC}" == "0" ]]
+      then
+         echo "All tests passed!"
+      else
+         echo "Some test(s) failed...this could be a problem with the machine, and, NOT redis install."
+      fi
+      cp src/redis-benchmark /usr/local/bin
+      cp src/redis-check-aof /usr/local/bin
+      cp src/redis-check-rdb /usr/local/bin
+      cp src/redis-cli /usr/local/bin
+      cp src/redis-sentinel /usr/local/bin
+      cp src/redis-server /usr/local/bin
+      (rm -rf /etc/redis ; mkdir /etc/redis) 2> /dev/null
+      cp src/redis-trib.rb /etc/redis
+      cp redis.conf /etc/redis
+      cp sentinel.conf /etc/redis
+   fi
+   rm -f redis-stable.tar.gz
+   return $RC
+}
+
+install_consul()
+{
+#
+#  Install consul
+#
+   echo "Installing consul..."
+   (
+   rm -f consul_0.7.5_linux_amd64.zip
+   wget https://releases.hashicorp.com/consul/0.7.5/consul_0.7.5_linux_amd64.zip
+   unzip -o consul_0.7.5_linux_amd64.zip -d /usr/local/bin 
+   rm -f consul_0.7.5_linux_amd64.zip
+   ) 1> /dev/null 2>&1
+   which consul
+
+#
+#  Install consul web ui
+#
+   if [[ "${HST}" == "server1" ]]
+   then
+      echo "Installing consul UI..."
+      (
+      rm -rf /usr/local/bin/cui ; mkdir /usr/local/bin/cui
+      rm -f consul_0.7.5_web_ui.zip
+      wget https://releases.hashicorp.com/consul/0.7.5/consul_0.7.5_web_ui.zip
+      unzip -o consul_0.7.5_web_ui.zip -d /usr/local/bin/cui
+      rm -f consul_0.7.5_web_ui.zip
+      ) 1> /dev/null 2>&1
+      ls /usr/local/bin/cui
+   fi
+}
