@@ -1,0 +1,31 @@
+DevOps Programming Exercise – Vagrant Cluster
+
+Build a cluster of Redis and Consul nodes using Vagrant with a minimum of 3 VMs.  The instances of Redis and Consul must actually be clustered and able to communicate with each other.  The Redis and Consul instances can exist on the same VM to simplify things, but there needs to be at least 3 VMs in the cluster.
+
+For Redis, the candidate can use one of the two modes provided for clustering:
+	•	Redis Sentinel
+	•	Redis Cluster
+
+Consul provides a couple of methods for joining nodes to the cluster.  Use the method that does not require an Atlas account be created.
+The candidate will be required to provide the Vagrantfile that will be used to create the cluster and a simple smoke test that verifies the cluster is working as expected.  This could be provided as part of the Vagrantfile or a separate script if desired.  The only command that can be issued to start the VMs and the cluster should be:
+
+$ vagrant up
+
+This exercise can be done using any tools desired by the candidate (i.e. they can use Ansible, Chef, shell-scripting, etc.), the only requirement is Vagrant.  If any tools outside of Vagrant are required, they must be specified, and some simple installation steps must be provided (i.e. Docker, ChefDK, etc.).
+
+Bonus Points:
+	•	Create the cluster using Vagrant and Docker containers.
+	•	Ability to control the size of the cluster from Vagrant (using say environment variables).
+ 
+Functional Requirements:
+	•	Vagrantfile that creates a cluster of three VMs
+	•	Redis installed on cluster and configured to operate in clustered mode
+	•	Consul installed on cluster and configured to operate in clustered/distributed mode
+	•	Smoke test provided in Vagrantfile or via external script to validate operation of Redis and Consul clusters.
+
+Non-Functional Requirements:
+	•	The sample project must include instructions for running the project.
+	•	The choice of provisioners and tools is up to the developer; using Vagrant is the only requirement.
+	•	Projects can be submitted to us either via a zip/tarball containing all source, or alternatively, a link to an available GitHub, Bitbucket, or similar repository.
+
+
