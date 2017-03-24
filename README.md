@@ -1,7 +1,7 @@
 # assignment
 setting up redis and consul in a cluster using vagrant
 
-See the Assignment.rtf file found in this directory.
+See the assignment.txt file found in this directory.
 
 It explains the tasks to be accomplished. 
 
