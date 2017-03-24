@@ -1,0 +1,11 @@
+{
+    "encrypt": "1+AIdIflw2okFX0rOOlmbQ==",
+    "bootstrap": false,
+    "start_join": ["192.168.33.101", "192.168.33.103"], 
+    "server": true,
+    "data_dir": "/var/consul",
+    "log_level": "INFO",
+    "enable_syslog": true,
+    "bind_addr": "192.168.33.102",
+    "client_addr": "192.168.33.102"
+}

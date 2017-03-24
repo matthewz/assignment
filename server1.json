@@ -1,0 +1,11 @@
+{
+    "ui_dir": "/usr/local/bin/cui", 
+    "encrypt": "1+AIdIflw2okFX0rOOlmbQ==",
+    "bootstrap": true,
+    "server": true,
+    "data_dir": "/var/consul",
+    "log_level": "INFO",
+    "enable_syslog": true,
+    "bind_addr": "192.168.33.101",
+    "client_addr": "192.168.33.101"
+}
